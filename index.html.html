@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Kubus 3D interaktif - soal 48, 49, 50</title>
+<style>
+:root{--bg:#f4f5f7;--fg:#14171c;--mut:#59616d;--line:#cdd3db;--acc:#1b55e0;--card:#fff;--stage:#e9ecf1;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#13161a;--fg:#eceff3;--mut:#9aa3af;--line:#343b45;--acc:#86a8ff;--card:#1c2026;--stage:#23282f}}
+:root[data-theme="dark"]{--bg:#13161a;--fg:#eceff3;--mut:#9aa3af;--line:#343b45;--acc:#86a8ff;--card:#1c2026;--stage:#23282f}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+main{max-width:720px;margin:0 auto;padding:20px 16px 32px}
+h1{font-size:1.35rem;margin:0 0 4px;line-height:1.25}
+p{margin:0}
+.sub{color:var(--mut);font-size:.92rem;margin-bottom:14px}
+.tabs,.btns{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+button{font:inherit;font-size:.95rem;padding:8px 14px;border-radius:8px;border:1px solid var(--line);background:var(--card);color:var(--fg);cursor:pointer}
+button:focus-visible,input:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
+button[aria-pressed="true"]{background:var(--acc);border-color:var(--acc);color:#fff}
+button.go{border-color:var(--acc);color:var(--acc);font-weight:600}
+.stage{background:var(--stage);border:1px solid var(--line);border-radius:12px;overflow:hidden}
+canvas{display:block;width:100%;touch-action:none;cursor:grab}
+canvas:active{cursor:grabbing}
+.legend{display:flex;gap:16px;flex-wrap:wrap;font-size:.88rem;color:var(--mut);margin:10px 0}
+.sw{display:inline-block;width:14px;height:14px;border:2px solid #111;vertical-align:-2px;margin-right:6px;border-radius:2px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px 14px;font-size:.95rem}
+.card b{display:block;margin-bottom:4px}
+label{display:inline-flex;gap:6px;align-items:center;font-size:.92rem;color:var(--mut)}
+</style>
+</head>
+<body>
+<main>
+<h1>Soal 48, 49, 50: kubus 3D, putar ke semua arah</h1>
+<p class="sub">Seret kubus untuk memutar. Tombol Gambar 1-4 memutar ke tiap gambar soal. Tombol jawaban memutar ke pose kunci.</p>
+<div class="tabs" id="tabs" role="group" aria-label="Pilih soal"></div>
+<div class="stage"><canvas id="cv" aria-label="Kubus 3D yang bisa diputar"></canvas></div>
+<div class="legend"><span><i class="sw" style="background:#fff"></i>sisi dengan pola dari soal</span><span><i class="sw" style="background:#d6d9de"></i>sisi kosong (tidak diketahui)</span></div>
+<div class="btns" id="poses"></div>
+<div class="btns">
+<button id="br">Reset tampilan</button>
+<label><input type="checkbox" id="spin"> putar otomatis</label>
+</div>
+<div class="card" id="note"></div>
+</main>
+<script>
+const B={
+F:{n:[0,0,1],u:[1,0,0],v:[0,1,0]},
+U:{n:[0,1,0],u:[1,0,0],v:[0,0,-1]},
+R:{n:[1,0,0],u:[0,0,-1],v:[0,1,0]},
+D:{n:[0,-1,0],u:[1,0,0],v:[0,0,1]},
+K:{n:[0,0,-1],u:[-1,0,0],v:[0,1,0]},
+W:{n:[-1,0,0],u:[0,0,1],v:[0,1,0]}};
+const K='#111',W='#fff';
+const P={"48":{"t":"Soal 48, jawaban C","faces":{"U":[["p",[[0,0.6],[-0.55,-0.45],[0.55,-0.45]],W]],"F":[["l",[[-1,-1],[1,1]]],["l",[[-1,1],[1,-1]]]],"R":[["p",[[-0.5,-0.5],[0.5,-0.5],[0.5,0.5],[-0.5,0.5]],K]],"D":[["c",[-0.5,0],0.12,K],["c",[0.5,0],0.12,K],["c",[0,0.5],0.12,K],["c",[0,-0.5],0.12,K]],K:[["p",[[-0.6,-0.6],[0.6,-0.6],[0.6,0.6],[-0.6,0.6]],W]],W:[["c",[0,0],0.62,K]]},"poses":[["Gambar 1",[1,0,0,0,1,0,0,0,1]],["Gambar 2",[0,0,1,0,1,0,-1,0,0]],["Gambar 3",[0,1,0,0,0,-1,-1,0,0]],["Gambar 4",[-1,0,0,0,0,-1,0,-1,0]],["Putar ke jawaban C",[0,0,-1,1,0,0,0,-1,0]]],"note":"Dari 4 gambar soal, keenam sisi ketahuan: segitiga, X, persegi hitam, persegi garis, 4 titik, lingkaran hitam. Pasangan berseberangan: segitiga-4 titik, lingkaran hitam-persegi hitam, X-persegi garis. Jawaban C: persegi hitam di atas, 4 titik di depan, persegi garis di kanan. Bentuk lonjong di sisi samping adalah lingkaran atau persegi yang terlihat miring."},"49":{"t":"Soal 49, jawaban B","faces":{"U":[["p",[[-0.66,-0.66],[-0.44000000000000006,-0.66],[-0.44000000000000006,-0.44000000000000006],[-0.66,-0.44000000000000006]],K],["p",[[0.44000000000000006,-0.66],[0.66,-0.66],[0.66,-0.44000000000000006],[0.44000000000000006,-0.44000000000000006]],K],["p",[[0.44000000000000006,0.44000000000000006],[0.66,0.44000000000000006],[0.66,0.66],[0.44000000000000006,0.66]],K],["p",[[-0.66,0.44000000000000006],[-0.44000000000000006,0.44000000000000006],[-0.44000000000000006,0.66],[-0.66,0.66]],K],["p",[[-0.11,-0.11],[0.11,-0.11],[0.11,0.11],[-0.11,0.11]],K]],"F":[["p",[[-0.11,-0.11],[0.11,-0.11],[0.11,0.11],[-0.11,0.11]],K]],"R":[["p",[[-0.61,-0.11],[-0.39,-0.11],[-0.39,0.11],[-0.61,0.11]],K],["p",[[0.39,-0.11],[0.61,-0.11],[0.61,0.11],[0.39,0.11]],K]],"D":[["p",[[-0.71,-0.61],[-0.49,-0.61],[-0.49,-0.39],[-0.71,-0.39]],K],["p",[[-0.71,0.39],[-0.49,0.39],[-0.49,0.61],[-0.71,0.61]],K],["p",[[-0.11,-0.61],[0.11,-0.61],[0.11,-0.39],[-0.11,-0.39]],K],["p",[[-0.11,0.39],[0.11,0.39],[0.11,0.61],[-0.11,0.61]],K],["p",[[0.49,-0.61],[0.71,-0.61],[0.71,-0.39],[0.49,-0.39]],K],["p",[[0.49,0.39],[0.71,0.39],[0.71,0.61],[0.49,0.61]],K]],K:[["p",[[-0.71,-0.11],[-0.49,-0.11],[-0.49,0.11],[-0.71,0.11]],K],["p",[[-0.11,-0.11],[0.11,-0.11],[0.11,0.11],[-0.11,0.11]],K],["p",[[0.49,-0.11],[0.71,-0.11],[0.71,0.11],[0.49,0.11]],K]],W:[["p",[[-0.66,-0.66],[-0.44000000000000006,-0.66],[-0.44000000000000006,-0.44000000000000006],[-0.66,-0.44000000000000006]],K],["p",[[0.44000000000000006,-0.66],[0.66,-0.66],[0.66,-0.44000000000000006],[0.44000000000000006,-0.44000000000000006]],K],["p",[[0.44000000000000006,0.44000000000000006],[0.66,0.44000000000000006],[0.66,0.66],[0.44000000000000006,0.66]],K],["p",[[-0.66,0.44000000000000006],[-0.44000000000000006,0.44000000000000006],[-0.44000000000000006,0.66],[-0.66,0.66]],K]]},"poses":[["Gambar 1",[1,0,0,0,1,0,0,0,1]],["Gambar 2",[1,0,0,0,0,-1,0,1,0]],["Gambar 3",[0,0,-1,-1,0,0,0,1,0]],["Gambar 4",[0,0,-1,0,-1,0,-1,0,0]],["Putar ke jawaban B",[0,-1,0,0,0,1,-1,0,0]]],"note":"Kubus ini dadu non-standar: 5 di atas, 1 di depan, 2 di kanan, 6 di bawah, 3 di belakang, 4 di kiri. Arah titik pada sisi 2, 3, dan 6 ikut menentukan: pada sisi 6 tiap barisnya 3 titik sejajar sumbu yang sama dengan sisi 3. Jawaban B: sisi 1 di atas, 4 di depan, 6 di kanan dengan barisnya mendatar."},"50":{"t":"Soal 50, jawaban C","faces":{"U":[],"F":[["p",[[-0.55,-0.55],[0.55,-0.55],[0.55,0.55],[-0.55,0.55]],K]],"R":[["c",[0,0],0.6,W]],"D":[["p",[[-0.6,-0.6],[0.6,-0.6],[0.6,0.6],[-0.6,0.6]],W]],W:[["p",[[-0.6,-0.1],[-0.4,-0.1],[-0.4,0.1],[-0.6,0.1]],K],["p",[[0.4,-0.1],[0.6,-0.1],[0.6,0.1],[0.4,0.1]],K],["p",[[-0.1,0.4],[0.1,0.4],[0.1,0.6],[-0.1,0.6]],K],["p",[[-0.1,-0.6],[0.1,-0.6],[0.1,-0.4],[-0.1,-0.4]],K]],K:[["c",[0,0],0.6,K]]},"poses":[["Gambar 1",[1,0,0,0,1,0,0,0,1]],["Gambar 2",[1,0,0,0,0,1,0,-1,0]],["Gambar 3",[0,0,-1,1,0,0,0,-1,0]],["Gambar 4",[0,0,-1,0,-1,0,-1,0,0]],["Putar ke jawaban C",[0,1,0,0,0,-1,-1,0,0]]],"note":"Dari 4 gambar soal, keenam sisi ketahuan: polos, persegi hitam, lingkaran garis, persegi garis, 4 titik, lingkaran hitam. Pasangan berseberangan: polos-persegi garis, persegi hitam-lingkaran hitam, lingkaran garis-4 titik. Jawaban C: lingkaran hitam di atas, 4 titik di depan, sisi polos di kanan."}};
+// matriks 3x3 baris-utama
+const mm=(a,b)=>{const r=[];for(let i=0;i<3;i++)for(let j=0;j<3;j++)r.push(a[i*3]*b[j]+a[i*3+1]*b[3+j]+a[i*3+2]*b[6+j]);return r};
+const mv=(m,p)=>[m[0]*p[0]+m[1]*p[1]+m[2]*p[2],m[3]*p[0]+m[4]*p[1]+m[5]*p[2],m[6]*p[0]+m[7]*p[1]+m[8]*p[2]];
+const rx=a=>{const c=Math.cos(a),s=Math.sin(a);return[1,0,0,0,c,-s,0,s,c]};
+const ry=a=>{const c=Math.cos(a),s=Math.sin(a);return[c,0,s,0,1,0,-s,0,c]};
+function m2q(m){const t=m[0]+m[4]+m[8];let w,x,y,z,s;
+ if(t>0){s=Math.sqrt(t+1)*2;w=s/4;x=(m[7]-m[5])/s;y=(m[2]-m[6])/s;z=(m[3]-m[1])/s}
+ else if(m[0]>m[4]&&m[0]>m[8]){s=Math.sqrt(1+m[0]-m[4]-m[8])*2;w=(m[7]-m[5])/s;x=s/4;y=(m[1]+m[3])/s;z=(m[2]+m[6])/s}
+ else if(m[4]>m[8]){s=Math.sqrt(1+m[4]-m[0]-m[8])*2;w=(m[2]-m[6])/s;x=(m[1]+m[3])/s;y=s/4;z=(m[5]+m[7])/s}
+ else{s=Math.sqrt(1+m[8]-m[0]-m[4])*2;w=(m[3]-m[1])/s;x=(m[2]+m[6])/s;y=(m[5]+m[7])/s;z=s/4}
+ const l=Math.hypot(w,x,y,z);return[w/l,x/l,y/l,z/l]}
+function q2m([w,x,y,z]){return[1-2*(y*y+z*z),2*(x*y-w*z),2*(x*z+w*y),2*(x*y+w*z),1-2*(x*x+z*z),2*(y*z-w*x),2*(x*z-w*y),2*(y*z+w*x),1-2*(x*x+y*y)]}
+function slerp(a,b,t){let d=a[0]*b[0]+a[1]*b[1]+a[2]*b[2]+a[3]*b[3];if(d<0){b=b.map(v=>-v);d=-d}
+ if(d>.9995){const r=a.map((v,i)=>v+(b[i]-v)*t);const l=Math.hypot(...r);return r.map(v=>v/l)}
+ const th=Math.acos(d),s=Math.sin(th),k1=Math.sin((1-t)*th)/s,k2=Math.sin(t*th)/s;return a.map((v,i)=>v*k1+b[i]*k2)}
+
+const V=mm(rx(.4),ry(-.5));
+const Q=[0,1,0,0,0,1,1,0,0]; // rotasi 120 derajat: depan->atas, atas->kanan, kanan->depan
+const qI=[1,0,0,0],I3=[1,0,0,0,1,0,0,0,1];
+let cur='48',M=V.slice(),yaw=-.5,pitch=.4,qa=qI,anim=null,drag=null,W_=0,H_=0,S=0;
+const cv=document.getElementById('cv'),ctx=cv.getContext('2d');
+
+function size(){const w=cv.parentElement.clientWidth,h=Math.round(w*.82),d=window.devicePixelRatio||1;
+ W_=w;H_=h;S=w*.2;cv.width=w*d;cv.height=h*d;cv.style.height=h+'px';ctx.setTransform(d,0,0,d,0,0);draw()}
+
+function draw(){
+ M=mm(rx(pitch),mm(ry(yaw),q2m(qa)));
+ ctx.clearRect(0,0,W_,H_);
+ const cx=W_/2,cy=H_/2,fs=P[cur].faces;
+ ctx.lineJoin='round';ctx.lineCap='round';
+ for(const k in B){
+  const f=B[k],nz=mv(M,f.n)[2];if(nz<=.001)continue;
+  const sc=(a,b)=>{const p=mv(M,[f.n[0]+a*f.u[0]+b*f.v[0],f.n[1]+a*f.u[1]+b*f.v[1],f.n[2]+a*f.u[2]+b*f.v[2]]);return[cx+S*p[0],cy-S*p[1]]};
+  const path=pts=>{ctx.beginPath();pts.forEach((q,i)=>{const s=sc(q[0],q[1]);i?ctx.lineTo(s[0],s[1]):ctx.moveTo(s[0],s[1])});ctx.closePath()};
+  const sq=[[-1,-1],[1,-1],[1,1],[-1,1]],pat=fs[k];
+  path(sq);ctx.fillStyle=pat?'#fff':'#d6d9de';ctx.fill();
+  if(pat)for(const e of pat){
+   ctx.strokeStyle=K;ctx.lineWidth=2.5;
+   if(e[0]==='p'){path(e[1]);ctx.fillStyle=e[2];ctx.fill();ctx.stroke()}
+   else if(e[0]==='c'){const pts=[];for(let i=0;i<32;i++){const a=i/32*6.2832;pts.push([e[1][0]+e[2]*Math.cos(a),e[1][1]+e[2]*Math.sin(a)])}path(pts);ctx.fillStyle=e[3];ctx.fill();ctx.stroke()}
+   else if(e[0]==='l'){const a=sc(...e[1][0]),b=sc(...e[1][1]);ctx.beginPath();ctx.moveTo(a[0],a[1]);ctx.lineTo(b[0],b[1]);ctx.stroke()}
+   else if(e[0]==='r'){const[c,hw,hh]=[e[1],e[2],e[3]];path([[c[0]-hw,c[1]-hh],[c[0]+hw,c[1]-hh],[c[0]+hw,c[1]+hh],[c[0]-hw,c[1]+hh]]);ctx.stroke()}
+  }
+  path(sq);ctx.fillStyle='rgba(0,0,0,'+(.16*(1-nz)).toFixed(3)+')';ctx.fill();
+  ctx.strokeStyle=K;ctx.lineWidth=3.5;ctx.stroke();
+ }
+}
+
+function go(q1){anim={q0:qa,q1,y0:yaw,p0:pitch,t0:performance.now(),dur:1100}}
+function tick(now){
+ if(anim){let t=Math.min(1,(now-anim.t0)/anim.dur);t=t<.5?2*t*t:1-Math.pow(-2*t+2,2)/2;qa=slerp(anim.q0,anim.q1,t);yaw=anim.y0+(-.5-anim.y0)*t;pitch=anim.p0+(.4-anim.p0)*t;if(now-anim.t0>=anim.dur)anim=null;draw()}
+ else if(document.getElementById('spin').checked&&!drag){yaw+=.008;draw()}
+ requestAnimationFrame(tick)}
+
+cv.addEventListener('pointerdown',e=>{anim=null;drag={x:e.clientX,y:e.clientY};cv.setPointerCapture(e.pointerId)});
+cv.addEventListener('pointermove',e=>{if(!drag)return;const dx=e.clientX-drag.x,dy=e.clientY-drag.y;drag={x:e.clientX,y:e.clientY};
+ yaw+=dx*.011;pitch=Math.max(-1.55,Math.min(1.55,pitch+dy*.011));draw()});
+const end=()=>{drag=null};cv.addEventListener('pointerup',end);cv.addEventListener('pointercancel',end);
+
+function pick(id){cur=id;anim=null;qa=qI;yaw=-.5;pitch=.4;
+ document.querySelectorAll('#tabs button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.id===id));
+ const pb=document.getElementById('poses');pb.innerHTML='';
+ P[id].poses.forEach((p,i)=>{const b=document.createElement('button');b.textContent=p[0];if(/jawaban/.test(p[0]))b.className='go';b.onclick=()=>go(m2q(p[1]));pb.appendChild(b)});
+ document.getElementById('note').innerHTML='<b>'+P[id].t+'</b>'+P[id].note;
+ draw()}
+const tabs=document.getElementById('tabs');
+Object.keys(P).forEach(id=>{const b=document.createElement('button');b.textContent='Soal '+id;b.dataset.id=id;b.onclick=()=>pick(id);tabs.appendChild(b)});
+document.getElementById('br').onclick=()=>go(qI);
+addEventListener('resize',size);
+pick('48');size();requestAnimationFrame(tick);
+</script>
+</body>
+</html>
